@@ -112,24 +112,23 @@ end
 
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
-tags = {
-    names = { "term", "www", "subl", "im", "fm", "win", "etc" },
-    layouts = { layouts[2], layouts[1], layouts[2], layouts[1], layouts[2], layouts[2] },
-    icons = {icons .. "arch.png", icons .. "fox.png", icons .. "cat.png"}
-}
-tags2 = {
-    names = { "media", "read" },
-    layouts = { layouts[2], layouts[2] }
-}
+tags = {{
+      names   = { "term", "www", "subl", "fm", "win", "etc" },
+      layouts = { layouts[6], layouts[6], layouts[6], layouts[6], layouts[6], layouts[6] }
+    }, {
+      names   = { "media", "read" },
+      layouts = { layouts[6], layouts[6] }
+}}
+
+tagicons   = {icons .. "arch.png", icons .. "fox.png", icons .. "cat.png"}
+
 for s = 1, screen.count() do
     -- Each screen has its own tag table.
-    if s == 1 
-      then tags[s] = awful.tag(tags.names, s, tags.layouts)
-      else tags[s] = awful.tag(tags2.names, s, tags2.layouts)
-    end
-
-    for i,v in ipairs(tags.icons) do
-      awful.tag.seticon(tags.icons[i], tags[s][i])
+    tags[s] = awful.tag(tags[s].names, s, tags[s].layouts)
+    if s == 1 then
+      for i,v in ipairs(tagicons) do
+        awful.tag.seticon(tagicons[i],tags[s][i])
+      end
     end
 end
 -- }}}
@@ -381,7 +380,6 @@ for s = 1, screen.count() do
     -- Create a tasklist widget
     mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
-    if s == 1 then
 
         -- TOP BOX
         mytopbox[s] = awful.wibox({ position = "top", screen = s, height = barheight })
@@ -396,36 +394,38 @@ for s = 1, screen.count() do
         local right_layout = wibox.layout.fixed.horizontal()
         right_layout:add(spacer)
 
-        right_layout:add(memicon)
-        right_layout:add(memwidget)
-        right_layout:add(spacer_small)
-        right_layout:add(cpuicon)
-        right_layout:add(cpuwidget)
-        right_layout:add(spacer)        
+        if s == 1 then
+          right_layout:add(memicon)
+          right_layout:add(memwidget)
+          right_layout:add(spacer_small)
+          right_layout:add(cpuicon)
+          right_layout:add(cpuwidget)
+          right_layout:add(spacer)        
 
-        right_layout:add(wifiicon)
-        right_layout:add(spacer_small)
-        right_layout:add(wifiwidget)
-        right_layout:add(spacer)
+          right_layout:add(wifiicon)
+          right_layout:add(spacer_small)
+          right_layout:add(wifiwidget)
+          right_layout:add(spacer)
 
-        right_layout:add(volicon)
-        right_layout:add(spacer_small)
-        right_layout:add(volwidget)
-        right_layout:add(spacer)
+          right_layout:add(volicon)
+          right_layout:add(spacer_small)
+          right_layout:add(volwidget)
+          right_layout:add(spacer)
 
-        right_layout:add(powericon)
-        right_layout:add(baticon)
-        right_layout:add(spacer_small)
-        right_layout:add(batwidget)
-        right_layout:add(spacer)
+          right_layout:add(powericon)
+          right_layout:add(baticon)
+          right_layout:add(spacer_small)
+          right_layout:add(batwidget)
+          right_layout:add(spacer)
 
-        right_layout:add(uptimeicon)
-        right_layout:add(uptimewidget)
-        right_layout:add(spacer)        
+          right_layout:add(uptimeicon)
+          right_layout:add(uptimewidget)
+          right_layout:add(spacer)        
 
-        right_layout:add(datewidget)
-        right_layout:add(spacer_small)
-        if s == 1 then right_layout:add(wibox.widget.systray()) end
+          right_layout:add(datewidget)
+          right_layout:add(spacer_small)
+          right_layout:add(wibox.widget.systray())
+        end
 
         -- Now bring it all together (with the tasklist in the middle)
         local layout = wibox.layout.align.horizontal()
@@ -434,7 +434,6 @@ for s = 1, screen.count() do
 
         mytopbox[s]:set_widget(layout)
 
-    end
 
     -- BOT BOX
     mybotbox[s] = awful.wibox({ position = "bottom", screen = s, height = barheight })
@@ -522,7 +521,7 @@ clientkeys = awful.util.table.join(
     awful.key({ altkey,           }, "F4",      function (c) c:kill()                         end),
     awful.key({ modkey, "Control" }, "space",  awful.client.floating.toggle                     ),
     awful.key({ modkey, "Control" }, "Return", function (c) c:swap(awful.client.getmaster()) end),
-    awful.key({ modkey,           }, "o",      awful.client.movetoscreen                        ),
+    awful.key({ modkey, "Control" }, "o",      function(c) awful.client.movetoscreen(c,c.screen-1) end ),
     awful.key({ modkey,           }, "t",      function (c) c.ontop = not c.ontop            end),
     awful.key({ modkey,           }, "n",
         function (c)
@@ -614,16 +613,16 @@ awful.rules.rules = {
 
     -- 2:www
     { rule = { name = "Chromium" },
-      properties = { tag = tags[1][2] } },
+      properties = { 
+        tag = tags[1][2],
+        maximized_vertical = true,
+        maximized_horizontal = true
+        } 
+    },
       
     -- 3:subl
     { rule = { class = "subl" },
       properties = { tag = tags[1][3] } },
-
-    -- 4:im
-    { rule = { name = "Hangouts" },
-      properties = { tag = tags[1][4], switchtotag = true
-       } },
 
     -- 5:fm
     { rule = { class    = "URxvt", name = "File Manager" },              
