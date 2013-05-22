@@ -114,10 +114,10 @@ end
 -- Define a tag table which hold all screen tags.
 tags = {{
       names   = { "term", "www", "subl", "fm", "win", "etc" },
-      layouts = { layouts[6], layouts[6], layouts[6], layouts[6], layouts[6], layouts[6] }
+      layouts = { layouts[6], layouts[8], layouts[8], layouts[8], layouts[8], layouts[8] }
     }, {
       names   = { "media", "read" },
-      layouts = { layouts[6], layouts[6] }
+      layouts = { layouts[8], layouts[8] }
 }}
 
 tagicons   = {icons .. "arch.png", icons .. "fox.png", icons .. "cat.png"}
@@ -478,7 +478,7 @@ globalkeys = awful.util.table.join(
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto),
     awful.key({ modkey,           }, "Tab",
         function ()
-            awful.client.focus.history.previous()
+            awful.client.focus.byidx( 1)
             if client.focus then
                 client.focus:raise()
             end
@@ -540,6 +540,8 @@ clientkeys = awful.util.table.join(
     awful.key({ },     "XF86AudioMute",                function () awful.util.spawn( "amixer -q sset Master toggle" )                       end),
     -- Program hotkeys
     awful.key({ modkey,           }, "c",      function() awful.util.spawn( "chromium" )  end),
+    awful.key({ modkey,           }, "s",      function() awful.util.spawn( "subl" )  end),
+    awful.key({ altkey,           }, "r",      function() awful.util.spawn( "rdesktop 91.213.51.98:44132 -d INT -u i.chernov" )  end),
     awful.key({ modkey,           }, "e",      function() awful.util.spawn( cli_fileman )  end)
 )
 
@@ -604,8 +606,8 @@ awful.rules.rules = {
                      buttons = clientbuttons } },
 
     { rule = { class = "plugin-container" },
-      properties = { floating = false, maximized_vertical = true,
-      maximized_horizontal = true } },
+      properties = { floating = false } },
+      
     { rule = { instance = "exe" },
       properties = { floating = true } },
 
@@ -626,7 +628,11 @@ awful.rules.rules = {
 
     -- 5:fm
     { rule = { class    = "URxvt", name = "File Manager" },              
-      properties = { tag = tags[1][5], switchtotag = true } }
+      properties = { tag = tags[1][4], switchtotag = true } },
+
+    -- 6:work
+    { rule = { class    = "rdesktop", name = "91.213.51.98" },              
+      properties = { tag = tags[1][5], switchtotag = true } },
 }
 -- }}}
 
